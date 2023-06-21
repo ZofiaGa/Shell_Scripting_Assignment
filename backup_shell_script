@@ -73,7 +73,7 @@ tar -czvf "$backupFileName" "${toBackup[@]}"
 # [@] - expand the elements of the array toBackup as separate arguments
 # Chat GPT:
 # By using "${toBackup[@]}", you can ensure that each element of the array is correctly passed to the tar command, 
-#allowing you to include multiple files and directories in the archive without explicitly specifying each one individually.
+# allowing you to include multiple files and directories in the archive without explicitly specifying each one individually.
 
 # [TASK 13 - Move the file backupFileName to the destination directory located at destAbsPath]
 
