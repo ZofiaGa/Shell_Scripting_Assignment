@@ -15,19 +15,19 @@ then
   exit
 fi
 
-# [TASK 1]
+# [TASK 1 - Set two variables equal to the values of the first and second command line arguments]
 targetDirectory=$1
 destinationDirectory=$2
 
-# [TASK 2]
+# [TASK 2 - Display the values of the two command line arguments in the terminal]
 echo "$targetDirectory"
 echo "$destinationDirectory"
 
-# [TASK 3]
+# [TASK 3 - Define a variable as the current timestamp, expressed in seconds]
 currentTS=$(date +%s)
 # currentTS variable will save the current date transferred to seconds, this will be usefull when marking new files with distinct set of numbers
 
-# [TASK 4]
+# [TASK 4 - Define a variable to store the name of the archived and compressed backup file that the script will create]
 backupFileName="backup-$currentTS.tar.gz"
 
 # We're going to:
@@ -37,37 +37,35 @@ backupFileName="backup-$currentTS.tar.gz"
 
 # To make things easier, we will define some useful variables...
 
-# [TASK 5]
+# [TASK 5 - Define a variable with the absolute path of the current directory as the variable’s value]
 origAbsPath=$(pwd)
 
-# [TASK 6]
+# [TASK 6 - Define a variable with value equal to the absolute path of the destination directory]
 cd $destinationDirectory # <-
 destAbsPath=$(pwd)
 
-# [TASK 7]
+# [TASK 7 - Change directories from the current working directory to the target directory targetDirectory]
 cd $origAbsPath # <-
 cd $targetDirectory # <-
 
-# [TASK 8]
+# [TASK 8 - Find files that have been updated within the past 24 hours]
 yesterdayTS=$(($currentTS - 24 * 60 * 60))
-# yesterdayTS variable will hold the difference between the currenctTS and the number of seconds that a day holds (24hour * 60minutes * 60 seconds)
-# this will be usefull to identyfy if the file was generated in the last 24 hours
 
 declare -a toBackup
 # the -a is defining an array, the 'declare' creates a toBackup file
 # if we don't use -a the toBackup will not be an array but a single value/scalar value that we are not going to able to loop through later
 
-for file in $(ls) # [TASK 9]
+for file in $(ls) # [TASK 9 - Write a command that will return all files and directories in the current folder]
 do
-  # [TASK 10]
+  # [TASK 10 - Check whether the $file was modified within the last 24 hours]
   if (($(date -r "$file" +%s) > $yesterdayTS)) # -r tells to return the given file's time stamp
   then
-    # [TASK 11]
+    # [TASK 11 - Add the $file that was updated in the past 24-hours to the toBackup array]
     toBackup+=("$file") # the toBackup array is adding new file title every time the loop goes through
   fi
 done
 
-# [TASK 12]
+# [TASK 12 - Compress and archive the files, using the $toBackup array of filenames, to a file with the name backupFileName]
 
 tar -czvf "$backupFileName" "${toBackup[@]}"
 # the variable and the array is in double quotes ("") to prevent bug to occur, it is best practice 
@@ -77,7 +75,7 @@ tar -czvf "$backupFileName" "${toBackup[@]}"
 # By using "${toBackup[@]}", you can ensure that each element of the array is correctly passed to the tar command, 
 #allowing you to include multiple files and directories in the archive without explicitly specifying each one individually.
 
-# [TASK 13]
+# [TASK 13 - Move the file backupFileName to the destination directory located at destAbsPath]
 
 mv "$backupFileName" "$destAbsPath"
 
