@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# This checks if the number of arguments is correct
+# If the number of arguments is incorrect ( $# != 2) print error message and exit
+if [[ $# != 2 ]]
+then
+  echo "backup.sh target_directory_name destination_directory_name"
+  exit
+fi
+
+# This checks if argument 1 and argument 2 are valid directory paths
+if [[ ! -d $1 ]] || [[ ! -d $2 ]]
+then
+  echo "Invalid directory path provided"
+  exit
+fi
+
+# [TASK 1]
+targetDirectory=$1
+destinationDirectory=$2
+
+# [TASK 2]
+echo "$targetDirectory"
+echo "$destinationDirectory"
+
+# [TASK 3]
+currentTS=$(date +%s)
+# currentTS variable will save the current date transferred to seconds, this will be usefull when marking new files with distinct set of numbers
+
+# [TASK 4]
+backupFileName="backup-$currentTS.tar.gz"
+
+# We're going to:
+  # 1: Go into the target directory
+  # 2: Create the backup file
+  # 3: Move the backup file to the destination directory
+
+# To make things easier, we will define some useful variables...
+
+# [TASK 5]
+origAbsPath=$(pwd)
+
+# [TASK 6]
+cd $destinationDirectory # <-
+destAbsPath=$(pwd)
+
+# [TASK 7]
+cd $origAbsPath # <-
+cd $targetDirectory # <-
+
+# [TASK 8]
+yesterdayTS=$(($currentTS - 24 * 60 * 60))
+# yesterdayTS variable will hold the difference between the currenctTS and the number of seconds that a day holds (24hour * 60minutes * 60 seconds)
+# this will be usefull to identyfy if the file was generated in the last 24 hours
+
+declare -a toBackup
+# the -a is defining an array, the 'declare' creates a toBackup file
+# if we don't use -a the toBackup will not be an array but a single value/scalar value that we are not going to able to loop through later
+
+for file in $(ls) # [TASK 9]
+do
+  # [TASK 10]
+  if (($(date -r "$file" +%s) > $yesterdayTS)) # -r tells to return the given file's time stamp
+  then
+    # [TASK 11]
+    toBackup+=("$file") # the toBackup array is adding new file title every time the loop goes through
+  fi
+done
+
+# [TASK 12]
+
+tar -czvf "$backupFileName" "${toBackup[@]}"
+# the variable and the array is in double quotes ("") to prevent bug to occur, it is best practice 
+# example: if the file name has space, the file can be split in certain situation
+# [@] - expand the elements of the array toBackup as separate arguments
+# Chat GPT:
+# By using "${toBackup[@]}", you can ensure that each element of the array is correctly passed to the tar command, 
+#allowing you to include multiple files and directories in the archive without explicitly specifying each one individually.
+
+# [TASK 13]
+
+mv "$backupFileName" "$destAbsPath"
+
